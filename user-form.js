@@ -1,23 +1,22 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
-
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
 
 // Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyCzkDAkDpEdOijtKMb9F0jAwIO0BRg-oSw",
     authDomain: "login-page-7f976.firebaseapp.com",
     projectId: "login-page-7f976",
-    storageBucket: "login-page-7f976.firebasestorage.app",
+    storageBucket: "login-page-7f976.appspot.com",
     messagingSenderId: "1007118546590",
     appId: "1:1007118546590:web:2ed0f2f3851a0f6ec3ed8f",
     measurementId: "G-VJG1LBM777"
-  };
+};
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-
+const db = getFirestore(app);
 
 // Get elements
 const firstName = document.getElementById("firstName");
@@ -28,7 +27,7 @@ const birthdate = document.getElementById("birthdate");
 const saveBtn = document.getElementById("saveBtn");
 const editBtn = document.getElementById("editBtn");
 
-// Check if user is logged in
+// Check if user is logged in and fetch details
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         const userRef = doc(db, "users", user.uid);
@@ -50,7 +49,7 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 
-// Save user details
+// Save user details to Firestore
 saveBtn.addEventListener("click", async (event) => {
     event.preventDefault();
     const user = auth.currentUser;
@@ -64,15 +63,20 @@ saveBtn.addEventListener("click", async (event) => {
             birthdate: birthdate.value
         };
 
-        await setDoc(doc(db, "users", user.uid), userData, { merge: true });
-        alert("Data saved successfully!");
-        saveBtn.style.display = "none";
-        editBtn.style.display = "block";
+        try {
+            await setDoc(doc(db, "users", user.uid), userData, { merge: true });
+            alert("Data saved successfully!");
+            saveBtn.style.display = "none";
+            editBtn.style.display = "block";
+        } catch (error) {
+            console.error("Error saving data: ", error);
+            alert("Failed to save data. Please try again.");
+        }
     }
 });
 
-// Edit user details
-editBtn.addEventListener("click", async () => {
+// Enable edit mode
+editBtn.addEventListener("click", () => {
     saveBtn.style.display = "block";
     editBtn.style.display = "none";
 });
