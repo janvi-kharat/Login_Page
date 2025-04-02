@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Details Form</title>
+    <link rel="stylesheet" href="style1.css">
+    <script type="module" src="user-form.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>User Details</h1>
+        <form id="userDetailsForm">
+            <div class="input-group">
+                <label>First Name:</label>
+                <input type="text" id="firstName" required>
+            </div>
+            <div class="input-group">
+                <label>Middle Name:</label>
+                <input type="text" id="middleName">
+            </div>
+            <div class="input-group">
+                <label>Last Name:</label>
+                <input type="text" id="lastName" required>
+            </div>
+            <div class="input-group">
+                <label>Mobile No:</label>
+                <input type="text" id="mobileNumber" required>
+            </div>
+            <div class="input-group">
+                <label>Birthdate:</label>
+                <input type="date" id="birthdate" required>
+            </div>
+            <button type="submit" id="saveBtn">Save</button>
+            <button type="button" id="editBtn" style="display:none;">Edit</button>
+        </form>
+    </div>
+</body>
+</html>
