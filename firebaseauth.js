@@ -1,19 +1,24 @@
 // Import Firebase SDKs
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
-import { getFirestore, setDoc, doc } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
-
+import { 
+    getAuth, 
+    signInWithPopup, 
+    GoogleAuthProvider, 
+    createUserWithEmailAndPassword, 
+    signInWithEmailAndPassword 
+} from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+import { getFirestore, setDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
 
 // Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyCzkDAkDpEdOijtKMb9F0jAwIO0BRg-oSw",
     authDomain: "login-page-7f976.firebaseapp.com",
     projectId: "login-page-7f976",
-    storageBucket: "login-page-7f976.firebasestorage.app",
+    storageBucket: "login-page-7f976.appspot.com",
     messagingSenderId: "1007118546590",
     appId: "1:1007118546590:web:2ed0f2f3851a0f6ec3ed8f",
     measurementId: "G-VJG1LBM777"
-  };
+};
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -28,19 +33,25 @@ function signInWithGoogle() {
             const user = result.user;
             console.log("User signed in:", user);
 
-            // Store user data in Firestore
+            // Check if user exists in Firestore
             const userRef = doc(db, "users", user.uid);
-            await setDoc(userRef, {
-                name: user.displayName,
-                email: user.email,
-                profilePic: user.photoURL
-            }, { merge: true });
+            const userSnap = await getDoc(userRef);
 
-            localStorage.setItem('loggedInUserId', user.uid);
-            window.location.href = 'user-form.html';  // Redirect after login;
+            if (!userSnap.exists()) {
+                // Store new user data in Firestore
+                await setDoc(userRef, {
+                    name: user.displayName,
+                    email: user.email,
+                    profilePic: user.photoURL
+                });
+            }
+
+            localStorage.setItem("loggedInUserId", user.uid);
+            window.location.href = "user-form.html"; // Redirect to user details form
         })
         .catch((error) => {
-            console.error("Error during sign-in:", error);
+            console.error("Error during Google Sign-In:", error);
+            alert("Google Sign-In Failed: " + error.message);
         });
 }
 
@@ -49,40 +60,39 @@ function signUpUser(email, password, firstName, lastName) {
     createUserWithEmailAndPassword(auth, email, password)
         .then(async (userCredential) => {
             const user = userCredential.user;
+
+            // Save user data in Firestore
             const userData = {
                 email: email,
                 firstName: firstName,
                 lastName: lastName
             };
 
-            const docRef = doc(db, "users", user.uid);
-            await setDoc(docRef, userData);
+            await setDoc(doc(db, "users", user.uid), userData);
+
             alert("Account Created Successfully");
-            window.location.href = 'index.html';
+            window.location.href = "user-form.html"; // Redirect after signup
         })
         .catch((error) => {
-            alert("Error: " + error.message);
+            alert("Sign-Up Error: " + error.message);
         });
 }
 
 // Email and Password Sign-In Function
 function signInUser(email, password) {
     signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-        showMessage('Login successful', 'signInMessage');
-        const user = userCredential.user;
-        localStorage.setItem('loggedInUserId', user.uid);
-        window.location.href = 'user-form.html';  // Redirect after login
-    })
-    .catch((error) => {
-        showMessage('Incorrect Email or Password', 'signInMessage');
-    });
-
+        .then((userCredential) => {
+            const user = userCredential.user;
+            localStorage.setItem("loggedInUserId", user.uid);
+            window.location.href = "user-form.html"; // Redirect after login
+        })
+        .catch((error) => {
+            alert("Incorrect Email or Password");
+        });
 }
 
-// Attach event listener to Google Sign-In Button
+// Attach event listeners
 document.getElementById("google-signin-btn").addEventListener("click", signInWithGoogle);
-
 document.getElementById("submitSignUp").addEventListener("click", (event) => {
     event.preventDefault();
     const email = document.getElementById("rEmail").value;
@@ -91,7 +101,6 @@ document.getElementById("submitSignUp").addEventListener("click", (event) => {
     const lastName = document.getElementById("lName").value;
     signUpUser(email, password, firstName, lastName);
 });
-
 document.getElementById("submitSignIn").addEventListener("click", (event) => {
     event.preventDefault();
     const email = document.getElementById("email").value;
