@@ -1,39 +1,123 @@
-.container {
-    width: 300px;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
 }
 
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(to right, #aacff0, #020808);
+}
+
+/* Container */
+.container {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Heading */
+h1 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+/* Input Group */
 .input-group {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
     margin-bottom: 15px;
 }
 
 .input-group label {
-    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #555;
 }
 
 .input-group input {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: 0.3s ease;
 }
 
+.input-group input:focus {
+    border-color: #4facfe;
+    outline: none;
+    box-shadow: 0px 0px 5px rgba(79, 172, 254, 0.6);
+}
+
+/* Buttons */
 button {
     width: 100%;
-    padding: 10px;
-    background-color: #28a745;
+    padding: 12px;
     border: none;
-    color: white;
-    border-radius: 5px;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: bold;
     cursor: pointer;
+    transition: 0.3s ease;
     margin-top: 10px;
 }
 
-button:hover {
-    background-color: #218838;
+#saveBtn {
+    background: #4facfe;
+    color: white;
+}
+
+#saveBtn:hover {
+    background: #2a8dfc;
+}
+
+#editBtn {
+    background: #ff9800;
+    color: white;
+    display: none;
+}
+
+#editBtn:hover {
+    background: #e68900;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+    .container {
+        width: 90%;
+        padding: 1.5rem;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    input {
+        font-size: 0.9rem;
+    }
 }
